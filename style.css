@@ -1,0 +1,89 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f0f0f, #1f1f1f);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#drum-machine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#display {
+  background: rgba(30, 30, 30, 0.7);
+  backdrop-filter: blur(10px);
+  color: #00f7ff;
+  border: 2px solid rgba(0, 247, 255, 0.2);
+  border-radius: 20px;
+  padding: 20px 30px;
+  width: 60%;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 247, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+#display-text {
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin: 0;
+  color: #ffffff;
+}
+
+#drum-pads {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 25px;
+  justify-content: center;
+  width: 70%;
+}
+
+.drum-pad {
+  background: linear-gradient(145deg, #1c1c1c, #222222);
+  border-radius: 16px;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #2e2e2e;
+  position: relative;
+}
+
+.drum-pad:hover {
+  background: #00f7ff;
+  box-shadow: 0 0 20px #00f7ff, 0 0 60px #00f7ff33;
+  transform: scale(1.05);
+  color: #0f0f0f;
+}
+
+.drum-key {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #00f7ff;
+  text-shadow: 0 0 5px #00f7ff99;
+  margin: 0;
+}
+
+.drum-pad:active {
+  background-color: #00aab3;
+  box-shadow: 0 0 15px #00aab3aa;
+}
+
+.clip {
+  display: none;
+}
