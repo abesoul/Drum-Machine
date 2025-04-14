@@ -1,96 +1,34 @@
-const display = document.getElementById("display-text");
-const pads = document.querySelectorAll(".drum-pad");
-const uploadInput = document.getElementById("file-upload");
-const assignKey = document.getElementById("assign-key");
-const loopToggle = document.getElementById("loop-toggle-checkbox");
-const startTimeInput = document.getElementById("start-time");
-const endTimeInput = document.getElementById("end-time");
+import { auth } from './firebase-config.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js';
 
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-const analyser = audioContext.createAnalyser();
-analyser.fftSize = 256;
-const bufferLength = analyser.frequencyBinCount;
-const dataArray = new Uint8Array(bufferLength);
+const display = document.getElementById('display-text');
+const drumPads = document.getElementById('drum-pads');
+const visualizer = document.getElementById('visualizer');
+const loopToggle = document.getElementById('loop-toggle-checkbox');
+const fileUpload = document.getElementById('file-upload');
+const assignKeyInput = document.getElementById('assign-key');
 
-const audioElements = {};
-let currentAudio = null;
-let currentSource = null;
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let analyser = audioCtx.createAnalyser();
+let masterGain = audioCtx.createGain();
+masterGain.connect(analyser);
+analyser.connect(audioCtx.destination);
 
-// Create audio elements
-function createAudio(key, src) {
-  const audio = new Audio(src);
-  audio.loop = loopToggle.checked; // Default loop state
-  audioElements[key] = audio;
-}
+// Reverb node
+let reverb = audioCtx.createConvolver();
+reverb.connect(masterGain);
 
-// Spectrum visualization function
-function visualizeAudio(audio) {
-  const canvas = document.getElementById("spectrum");
-  const canvasCtx = canvas.getContext("2d");
+// SSL-style compressor
+let compressor = audioCtx.createDynamicsCompressor();
+compressor.threshold.setValueAt(-20);
+compressor.knee.setValueAt(30);
+compressor.ratio.setValueAt(12);
+compressor.attack.setValueAt(0.003);
+compressor.release.setValueAt(0.25);
+compressor.connect(reverb);
 
-  function draw() {
-    analyser.getByteFrequencyData(dataArray);
-    canvasCtx.fillStyle = "rgba(0, 0, 0, 0.1)";
-    canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-    const barWidth = (canvas.width / bufferLength) * 2.5;
-    let barHeight;
-    let x = 0;
-
-    for (let i = 0; i < bufferLength; i++) {
-      barHeight = dataArray[i];
-      canvasCtx.fillStyle = "#00f7ff";
-      canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-      x += barWidth + 1;
-    }
-
-    if (audio && !audio.paused) {
-      requestAnimationFrame(draw);
-    }
-  }
-
-  draw();
-}
-
-// Trim audio logic
-function trimAudio(audio, startTime, endTime) {
-  audio.currentTime = startTime;
-  audio.addEventListener("timeupdate", function () {
-    if (audio.currentTime >= endTime) {
-      audio.pause();
-    }
-  });
-}
-
-// Start/Stop logic
-function toggleAudio(key) {
-  const audio = audioElements[key];
-  if (audio.paused) {
-    if (currentAudio && currentAudio !== audio) {
-      currentAudio.pause();
-    }
-    audio.currentTime = startTimeInput.value;
-    audio.loop = loopToggle.checked;
-    audio.play();
-    visualizeAudio(audio);
-    currentAudio = audio;
-    display.textContent = `Playing: ${key} ${audio.loop ? "(Looping)" : ""}`;
-  } else {
-    audio.pause();
-    display.textContent = `Stopped: ${key}`;
-  }
-}
-
-// Event listener for key pads
-pads.forEach(pad => {
-  pad.addEventListener("click", () => {
-    const key = pad.dataset.key;
-    toggleAudio(key);
-  });
-});
-
-// Create audio elements for default sounds
-const sounds = {
+// Audio data
+const padData = {
   Q: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
   W: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
   E: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
@@ -99,31 +37,134 @@ const sounds = {
   D: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
   Z: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
   X: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-  C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+  C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
 };
 
-for (const key in sounds) {
-  createAudio(key, sounds[key]);
+let sources = {};
+let buffers = {};
+let loopMode = false;
+
+function createPad(key) {
+  const pad = document.createElement('div');
+  pad.className = 'drum-pad';
+  pad.innerText = key;
+  pad.id = key;
+
+  pad.addEventListener('click', () => handlePlay(key));
+  drumPads.appendChild(pad);
 }
 
-// Handle file upload and assign to key
-uploadInput.addEventListener("change", function () {
-  const file = this.files[0];
-  const selectedKey = assignKey.value;
+function handlePlay(key) {
+  if (!buffers[key]) return;
 
-  if (file && selectedKey) {
-    const url = URL.createObjectURL(file);
-    createAudio(selectedKey, url);
-    display.textContent = `Sample assigned to ${selectedKey}`;
-  } else {
-    alert("Select a key and upload a file.");
+  // Stop current if already playing
+  if (sources[key]) {
+    sources[key].stop();
+    sources[key] = null;
+    return;
   }
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = buffers[key];
+  source.loop = loopToggle.checked;
+  source.connect(compressor);
+  source.start();
+
+  sources[key] = source;
+
+  display.innerText = `Playing: ${key}`;
+}
+
+function fetchBuffer(url, key) {
+  fetch(url)
+    .then(res => res.arrayBuffer())
+    .then(data => audioCtx.decodeAudioData(data))
+    .then(buffer => {
+      buffers[key] = buffer;
+    });
+}
+
+function drawVisualizer() {
+  analyser.fftSize = 2048;
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+  const canvasCtx = visualizer.getContext("2d");
+
+  function draw() {
+    requestAnimationFrame(draw);
+    analyser.getByteFrequencyData(dataArray);
+    canvasCtx.fillStyle = "#000";
+    canvasCtx.fillRect(0, 0, visualizer.width, visualizer.height);
+    canvasCtx.fillStyle = "#0f0";
+    const barWidth = visualizer.width / bufferLength;
+    dataArray.forEach((val, i) => {
+      const y = (val / 255) * visualizer.height;
+      canvasCtx.fillRect(i * barWidth, visualizer.height - y, barWidth, y);
+    });
+  }
+
+  draw();
+}
+
+fileUpload.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  const key = assignKeyInput.value.toUpperCase();
+  if (!file || !key) return;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = await audioCtx.decodeAudioData(arrayBuffer);
+  buffers[key] = buffer;
+
+  if (!document.getElementById(key)) {
+    createPad(key);
+  }
+
+  display.innerText = `Assigned ${file.name} to ${key}`;
 });
 
-// Loop toggle state update
-loopToggle.addEventListener("change", () => {
-  const isLooping = loopToggle.checked;
-  Object.values(audioElements).forEach(audio => {
-    audio.loop = isLooping;
+document.getElementById("logout-btn").addEventListener("click", () => {
+  signOut(auth).then(() => {
+    window.location.href = "index.html";
   });
+});
+
+document.getElementById("save-project-btn").addEventListener("click", () => {
+  const project = {
+    pads: Object.keys(buffers),
+    loop: loopToggle.checked,
+  };
+  localStorage.setItem("drumProject", JSON.stringify(project));
+  alert("Project saved locally!");
+});
+
+document.getElementById("download-project-btn").addEventListener("click", () => {
+  const project = {
+    pads: Object.keys(buffers),
+    loop: loopToggle.checked,
+  };
+  const blob = new Blob([JSON.stringify(project, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "drum-machine-project.json";
+  a.click();
+});
+
+// Load and draw pads
+Object.keys(padData).forEach(key => {
+  createPad(key);
+  fetchBuffer(padData[key], key);
+});
+
+// Visualizer
+drawVisualizer();
+
+// Key press
+document.addEventListener("keydown", e => {
+  const key = e.key.toUpperCase();
+  if (buffers[key]) handlePlay(key);
+});
+
+// Auth gate
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.href = "index.html";
 });
