@@ -1,44 +1,69 @@
-<div id="drum-machine">
-  <div id="display">
-    <h2 id="display-text">Press a Key or Click a Pad</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Space Drum Machine</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <h1 class="title">🚀 Space Drum Machine</h1>
+    <div id="display">
+      <h2 id="display-text">Press a Key or Click a Pad</h2>
+    </div>
+
+    <div class="pad-grid">
+      <div class="drum-pad" data-key="Q">Q</div>
+      <div class="drum-pad" data-key="W">W</div>
+      <div class="drum-pad" data-key="E">E</div>
+      <div class="drum-pad" data-key="A">A</div>
+      <div class="drum-pad" data-key="S">S</div>
+      <div class="drum-pad" data-key="D">D</div>
+      <div class="drum-pad" data-key="Z">Z</div>
+      <div class="drum-pad" data-key="X">X</div>
+      <div class="drum-pad" data-key="C">C</div>
+    </div>
+
+    <div class="controls">
+      <label class="upload-label">
+        Upload Custom Sample
+        <input type="file" id="file-upload" accept="audio/*" />
+      </label>
+      <select id="assign-key">
+        <option value="">Assign to Key</option>
+        <option value="Q">Q</option>
+        <option value="W">W</option>
+        <option value="E">E</option>
+        <option value="A">A</option>
+        <option value="S">S</option>
+        <option value="D">D</option>
+        <option value="Z">Z</option>
+        <option value="X">X</option>
+        <option value="C">C</option>
+      </select>
+    </div>
+
+    <div class="loop-toggle">
+      <label for="loop-toggle-checkbox">
+        <input type="checkbox" id="loop-toggle-checkbox" />
+        Loop Mode
+      </label>
+    </div>
+
+    <div id="spectrum-container">
+      <canvas id="spectrum"></canvas>
+    </div>
+
+    <div class="trim-controls">
+      <label for="start-time">Start Time (s):</label>
+      <input type="number" id="start-time" min="0" step="0.1" value="0">
+      <label for="end-time">End Time (s):</label>
+      <input type="number" id="end-time" min="0" step="0.1" value="5">
+    </div>
   </div>
 
-  <div id="drum-pads">
-    <div class="drum-pad" id="Q">
-      <audio class="clip" id="Q-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
-      <p class="drum-key">Q</p>
-    </div>
-    <div class="drum-pad" id="W">
-      <audio class="clip" id="W-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
-      <p class="drum-key">W</p>
-    </div>
-    <div class="drum-pad" id="E">
-      <audio class="clip" id="E-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"></audio>
-      <p class="drum-key">E</p>
-    </div>
-    <div class="drum-pad" id="A">
-      <audio class="clip" id="A-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"></audio>
-      <p class="drum-key">A</p>
-    </div>
-    <div class="drum-pad" id="S">
-      <audio class="clip" id="S-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3"></audio>
-      <p class="drum-key">S</p>
-    </div>
-    <div class="drum-pad" id="D">
-      <audio class="clip" id="D-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3"></audio>
-      <p class="drum-key">D</p>
-    </div>
-    <div class="drum-pad" id="Z">
-      <audio class="clip" id="Z-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3"></audio>
-      <p class="drum-key">Z</p>
-    </div>
-    <div class="drum-pad" id="X">
-      <audio class="clip" id="X-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"></audio>
-      <p class="drum-key">X</p>
-    </div>
-    <div class="drum-pad" id="C">
-      <audio class="clip" id="C-audio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"></audio>
-      <p class="drum-key">C</p>
-    </div>
-  </div>
-</div>
+  <script src="script.js"></script>
+</body>
+</html>
