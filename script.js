@@ -214,6 +214,21 @@ function setupPadListeners() {
   });
 }
 
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.style.display = 'none';
+  });
+  document.getElementById(tabId).style.display = 'block';
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  const index = ['sequencer', 'pads', 'fx', 'library', 'challenges', 'settings'].indexOf(tabId);
+  document.querySelectorAll('.tab-btn')[index]?.classList.add('active');
+}
+
+
 // Keyboard pad triggers
 document.addEventListener("keydown", e => {
   const key = e.key.toUpperCase();
