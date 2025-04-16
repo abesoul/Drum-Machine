@@ -1,57 +1,3 @@
-// Redirect to login if not logged in
-if (!localStorage.getItem("loggedInUser")) {
-  window.location.href = "login.html";
-}
-
-// Display user name in the auth bar
-const userName = localStorage.getItem("loggedInUser");
-document.getElementById("user-name").innerText = userName;
-
-// Handle Logout
-function logout() {
-  localStorage.removeItem("loggedInUser");
-  window.location.href = "login.html";
-}
-
-// Tab switching functionality
-function showTab(tabId) {
-  const tabs = document.querySelectorAll(".tab-content");
-  tabs.forEach(tab => {
-    tab.classList.remove("active");
-  });
-
-  const activeTab = document.getElementById(tabId);
-  activeTab.classList.add("active");
-}
-
-// Save Project functionality
-function saveProject() {
-  alert("Project saved!");
-}
-
-// Load Project functionality
-function loadProject() {
-  alert("Project loaded!");
-}
-
-// Sample upload functionality
-document.getElementById("upload-sample").addEventListener("change", function(event) {
-  const file = event.target.files[0];
-  if (file) {
-    alert("Sample uploaded: " + file.name);
-  }
-});
-
-// Handle loop toggle
-const loopToggle = document.getElementById("loop-toggle-checkbox");
-loopToggle.addEventListener("change", function() {
-  if (loopToggle.checked) {
-    alert("Loop Mode Enabled");
-  } else {
-    alert("Loop Mode Disabled");
-  }
-});
-
 const display = document.getElementById("display-text");
 const pads = document.querySelectorAll(".drum-pad");
 const uploadInput = document.getElementById("file-upload");
@@ -66,6 +12,20 @@ analyser.fftSize = 256;
 const bufferLength = analyser.frequencyBinCount;
 const dataArray = new Uint8Array(bufferLength);
 
+// Redirect to login if not logged in
+if (!localStorage.getItem("loggedInUser")) {
+  window.location.href = "login.html";
+}
+
+// Display user name in the auth bar
+const userName = localStorage.getItem("loggedInUser");
+document.getElementById("user-name").innerText = userName;
+
+// Handle Logout
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "login.html";
+}
 // Reverb & Compressor setup
 const convolver = audioContext.createConvolver();
 const compressor = audioContext.createDynamicsCompressor();
@@ -116,6 +76,17 @@ function visualizeAudio(audio) {
   }
 
   draw();
+}
+
+// Tab switching functionality
+function showTab(tabId) {
+  const tabs = document.querySelectorAll(".tab-content");
+  tabs.forEach(tab => {
+    tab.classList.remove("active");
+  });
+
+  const activeTab = document.getElementById(tabId);
+  activeTab.classList.add("active");
 }
 
 // Trim audio logic
@@ -177,33 +148,32 @@ for (const key in sounds) {
   createAudio(key, sounds[key]);
 }
 
-// Handle file upload and assign to key
-uploadInput.addEventListener("change", function () {
-  const file = this.files[0];
-  const selectedKey = assignKey.value;
 
-  if (file && selectedKey) {
-    const url = URL.createObjectURL(file);
-    createAudio(selectedKey, url);
-    display.textContent = `Sample assigned to ${selectedKey}`;
-  } else {
-    alert("Select a key and upload a sample!");
+// Save Project functionality
+function saveProject() {
+  alert("Project saved!");
+}
+
+// Load Project functionality
+function loadProject() {
+  alert("Project loaded!");
+}
+
+// Sample upload functionality
+document.getElementById("upload-sample").addEventListener("change", function(event) {
+  const file = event.target.files[0];
+  if (file) {
+    alert("Sample uploaded: " + file.name);
   }
 });
 
-// Reverb amount
-document.getElementById("reverb-amount").addEventListener("input", function () {
-  const amount = parseFloat(this.value);
-  convolver.setValue(amount);
+// Handle loop toggle
+const loopToggle = document.getElementById("loop-toggle-checkbox");
+loopToggle.addEventListener("change", function() {
+  if (loopToggle.checked) {
+    alert("Loop Mode Enabled");
+  } else {
+    alert("Loop Mode Disabled");
+  }
 });
 
-// Compressor threshold and ratio
-document.getElementById("compressor-threshold").addEventListener("input", function () {
-  const threshold = parseFloat(this.value);
-  compressor.threshold.setValueAtTime(threshold, audioContext.currentTime);
-});
-
-document.getElementById("compressor-ratio").addEventListener("input", function () {
-  const ratio = parseFloat(this.value);
-  compressor.ratio.setValueAtTime(ratio, audioContext.currentTime);
-});
