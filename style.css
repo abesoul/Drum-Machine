@@ -36,6 +36,40 @@ body {
   transition: 0.3s ease;
 }
 
+/* Sequencer Control Buttons */
+.sequencer-controls {
+  margin: 20px 0;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.alien-btn {
+  background: linear-gradient(145deg, #0fffc1, #00ffe0);
+  color: black;
+  font-family: 'Orbitron', sans-serif;
+  border: none;
+  padding: 10px 18px;
+  font-size: 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 0 10px #00ffc3;
+}
+
+.alien-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #0fffc1, 0 0 25px #00ffe0;
+}
+
+.alien-btn.danger {
+  background: linear-gradient(145deg, #ff0077, #ff0055);
+  color: #fff;
+  box-shadow: 0 0 10px #ff0077;
+}
+
+
 #auth-bar button:hover {
   background-color: #00ffff;
   color: #000;
