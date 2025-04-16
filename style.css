@@ -221,3 +221,56 @@ h1 {
     transform: translateY(0);
   }
 }
+
+#tempo-control .tab-panel,
+#library .tab-panel {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f0f0f0;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.tempo-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.25rem;
+}
+
+.tempo-controls button {
+  padding: 0.5rem 1rem;
+  background-color: #0f0f0f;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.tempo-controls button:hover {
+  background-color: #00ff00;
+}
+
+#sample-list {
+  list-style: none;
+  padding: 0;
+}
+
+#sample-list li {
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0.5rem 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+#sample-list li:hover {
+  background-color: #00ff00;
+  color: #fff;
+}
