@@ -1,170 +1,199 @@
-// Variables for the drum machine
-const pads = document.querySelectorAll('.drum-pad');
-let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-let audioBuffers = {};
-let currentSound = null;
+<script>
+// === User Login/Logout ===
+if (!localStorage.getItem("loggedInUser")) {
+  window.location.href = "login.html";
+}
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "login.html";
+}
 
-// Store the project data
+// === Global Variables ===
+const pads = document.querySelectorAll('.drum-pad');
+const display = document.getElementById('display-text');
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const analyser = audioContext.createAnalyser();
+analyser.fftSize = 256;
+const dataArray = new Uint8Array(analyser.frequencyBinCount);
+const audioElements = {};
+let currentAudio = null;
+
+const convolver = audioContext.createConvolver();
+const compressor = audioContext.createDynamicsCompressor();
+compressor.threshold.setValueAtTime(-24, audioContext.currentTime);
+compressor.knee.setValueAtTime(30, audioContext.currentTime);
+compressor.ratio.setValueAtTime(4, audioContext.currentTime);
+compressor.attack.setValueAtTime(0.003, audioContext.currentTime);
+compressor.release.setValueAtTime(0.25, audioContext.currentTime);
+
 let projectData = {
   pads: [],
+  theme: 'light',
   effects: {
     delay: 0.5,
     filter: 0.5,
     bitcrusher: 0.5,
-  },
-  theme: 'light',
+    reverb: 0.5,
+    threshold: -24,
+    ratio: 4
+  }
 };
 
-// Pads functionality: Play sound when clicked
-pads.forEach(pad => {
-  pad.addEventListener('click', () => {
-    const key = pad.getAttribute('data-key');
-    if (currentSound) {
-      stopSound(currentSound);
+// === Audio Controls ===
+function createAudio(key, src) {
+  const audio = new Audio(src);
+  audio.loop = document.getElementById("loop-toggle-checkbox").checked;
+  audioElements[key] = audio;
+}
+
+function toggleAudio(key) {
+  const audio = audioElements[key];
+  const start = parseFloat(document.getElementById("start-time").value) || 0;
+  const end = parseFloat(document.getElementById("end-time").value) || audio.duration;
+
+  if (audio.paused) {
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
     }
-    playSound(key);
+    audio.currentTime = start;
+    audio.play();
+    currentAudio = audio;
+    trimAudio(audio, start, end);
+    visualizeAudio(audio);
+    display.textContent = `Playing: ${key}`;
+  } else {
+    audio.pause();
+    display.textContent = `Stopped: ${key}`;
+  }
+}
+
+function trimAudio(audio, start, end) {
+  audio.currentTime = start;
+  audio.addEventListener("timeupdate", function () {
+    if (audio.currentTime >= end) {
+      audio.pause();
+    }
   });
-});
-
-// Function to play the sound assigned to the key
-function playSound(key) {
-  const audio = new Audio(`https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${key.charCodeAt(0) - 64}.mp3`);
-  audio.play();
-  currentSound = audio;
 }
 
-// Stop the sound
-function stopSound(audio) {
-  audio.pause();
-  audio.currentTime = 0;
-}
+function visualizeAudio(audio) {
+  const canvas = document.getElementById("spectrum");
+  const ctx = canvas.getContext("2d");
 
-// Show the selected tab
-function showTab(tabId) {
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabContents.forEach(tab => tab.style.display = 'none');
-  document.getElementById(tabId).style.display = 'block';
-}
+  function draw() {
+    analyser.getByteFrequencyData(dataArray);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-// Dark mode toggle
-function toggleTheme() {
-  const themeToggle = document.getElementById('theme-toggle');
-  document.body.classList.toggle('dark', themeToggle.checked);
-  projectData.theme = themeToggle.checked ? 'dark' : 'light';
-}
+    const barWidth = (canvas.width / dataArray.length) * 2.5;
+    let x = 0;
 
-// Save project
-function saveProject() {
-  localStorage.setItem('projectData', JSON.stringify(projectData));
-  alert('Project saved!');
-}
-
-// Load project
-function loadProject() {
-  const savedData = JSON.parse(localStorage.getItem('projectData'));
-  if (savedData) {
-    projectData = savedData;
-    alert('Project loaded!');
-  } else {
-    alert('No saved project found.');
-  }
-}
-
-// Handle file upload for custom samples
-document.getElementById('upload-sample').addEventListener('change', handleFileUpload);
-
-function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (file && file.type.startsWith('audio/')) {
-    const reader = new FileReader();
-    reader.onload = function () {
-      audioContext.decodeAudioData(reader.result, (buffer) => {
-        audioBuffers[file.name] = buffer;
-        alert('Custom sample uploaded!');
-      });
-    };
-    reader.readAsArrayBuffer(file);
-  } else {
-    alert('Please upload a valid audio file.');
-  }
-}
-
-// Assign custom sample to a pad key
-document.getElementById('assign-sample-key').addEventListener('change', (event) => {
-  const key = event.target.value;
-  const sampleName = document.getElementById('upload-sample').files[0]?.name;
-  if (key && sampleName) {
-    audioBuffers[key] = audioBuffers[sampleName];
-    alert(`Sample assigned to ${key}`);
-  } else {
-    alert('Please upload a sample and select a key.');
-  }
-});
-
-// Audio effects controls
-document.getElementById('delay').addEventListener('input', (event) => {
-  projectData.effects.delay = event.target.value;
-});
-document.getElementById('filter').addEventListener('input', (event) => {
-  projectData.effects.filter = event.target.value;
-});
-document.getElementById('bitcrusher').addEventListener('input', (event) => {
-  projectData.effects.bitcrusher = event.target.value;
-});
-
-// Visualizer (Audio Spectrum)
-const spectrumCanvas = document.getElementById('spectrum');
-const spectrumCtx = spectrumCanvas.getContext('2d');
-let analyserNode = audioContext.createAnalyser();
-analyserNode.fftSize = 256;
-analyserNode.smoothingTimeConstant = 0.8;
-
-function updateVisualizer() {
-  analyserNode.getByteFrequencyData(new Uint8Array(analyserNode.frequencyBinCount));
-  spectrumCtx.clearRect(0, 0, spectrumCanvas.width, spectrumCanvas.height);
-  const data = new Uint8Array(analyserNode.frequencyBinCount);
-  analyserNode.getByteFrequencyData(data);
-  spectrumCtx.fillStyle = '#00ff00';
-  data.forEach((value, index) => {
-    spectrumCtx.fillRect(index * 2, spectrumCanvas.height - value, 2, value);
-  });
-  requestAnimationFrame(updateVisualizer);
-}
-
-// Set up the analyser node and start the visualizer
-function startVisualizer() {
-  const sourceNode = audioContext.createBufferSource();
-  sourceNode.connect(analyserNode);
-  analyserNode.connect(audioContext.destination);
-  updateVisualizer();
-}
-
-// Handle the step sequencer clicks
-function toggleStep(index) {
-  const step = document.querySelectorAll('.step')[index];
-  step.classList.toggle('active');
-}
-
-// Implement sequencer play/stop functionality
-let isSequencerPlaying = false;
-function playSequencer() {
-  isSequencerPlaying = !isSequencerPlaying;
-  if (isSequencerPlaying) {
-    // Start playing the steps
-    const steps = document.querySelectorAll('.step');
-    steps.forEach((step, index) => {
-      if (step.classList.contains('active')) {
-        setTimeout(() => {
-          playSound(String.fromCharCode(65 + (index % 8))); // Play sound based on index
-        }, index * 500); // Delay for each step
-      }
+    dataArray.forEach(value => {
+      ctx.fillStyle = '#00ffcc';
+      ctx.fillRect(x, canvas.height - value, barWidth, value);
+      x += barWidth + 1;
     });
+
+    if (!audio.paused) requestAnimationFrame(draw);
+  }
+
+  draw();
+}
+
+// === Pad Listeners ===
+pads.forEach(pad => {
+  pad.addEventListener("click", () => {
+    const key = pad.dataset.key;
+    toggleAudio(key);
+  });
+});
+
+// === Sample Upload ===
+document.getElementById("file-upload").addEventListener("change", function () {
+  const file = this.files[0];
+  const key = document.getElementById("assign-key").value;
+  if (file && key) {
+    const url = URL.createObjectURL(file);
+    createAudio(key, url);
+    display.textContent = `Sample assigned to ${key}`;
+  }
+});
+
+// === Effects Controls ===
+document.getElementById("reverb-amount").addEventListener("input", e => {
+  projectData.effects.reverb = parseFloat(e.target.value);
+});
+
+document.getElementById("compressor-threshold").addEventListener("input", e => {
+  const value = parseFloat(e.target.value);
+  compressor.threshold.setValueAtTime(value, audioContext.currentTime);
+  projectData.effects.threshold = value;
+});
+
+document.getElementById("compressor-ratio").addEventListener("input", e => {
+  const value = parseFloat(e.target.value);
+  compressor.ratio.setValueAtTime(value, audioContext.currentTime);
+  projectData.effects.ratio = value;
+});
+
+// === Theme ===
+document.getElementById("theme-toggle").addEventListener("change", function () {
+  const isDark = this.checked;
+  document.body.classList.toggle("dark", isDark);
+  projectData.theme = isDark ? 'dark' : 'light';
+});
+
+// === Project Save/Load ===
+function saveProject() {
+  localStorage.setItem("projectData", JSON.stringify(projectData));
+  alert("Project saved!");
+}
+
+function loadProject() {
+  const saved = JSON.parse(localStorage.getItem("projectData"));
+  if (saved) {
+    projectData = saved;
+    alert("Project loaded!");
+  } else {
+    alert("No saved project found.");
   }
 }
 
-// Initializer
-function init() {
-  showTab('pads'); // Start with the pads tab visible
+// === Step Sequencer ===
+function toggleStep(index) {
+  const step = document.querySelectorAll(".step")[index];
+  step.classList.toggle("active");
 }
 
-init();
+function playSequencer() {
+  const steps = document.querySelectorAll(".step");
+  steps.forEach((step, i) => {
+    if (step.classList.contains("active")) {
+      setTimeout(() => {
+        playSound(String.fromCharCode(65 + (i % 8)));
+      }, i * 500);
+    }
+  });
+}
+
+function playSound(key) {
+  if (audioElements[key]) {
+    audioElements[key].currentTime = 0;
+    audioElements[key].play();
+  }
+}
+
+// === Default Sounds ===
+const defaultSounds = {
+  Q: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  W: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  E: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  A: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  S: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  D: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  Z: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  X: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+};
+
+Object.keys(defaultSounds).forEach(key => createAudio(key, defaultSounds[key]));
+</script>
