@@ -177,3 +177,33 @@ loopToggle.addEventListener("change", function() {
   }
 });
 
+// Handle file upload and assign to key
+uploadInput.addEventListener("change", function () {
+  const file = this.files[0];
+  const selectedKey = assignKey.value;
+
+  if (file && selectedKey) {
+    const url = URL.createObjectURL(file);
+    createAudio(selectedKey, url);
+    display.textContent = `Sample assigned to ${selectedKey}`;
+  } else {
+    alert("Select a key and upload a sample!");
+  }
+});
+
+// Reverb amount
+document.getElementById("reverb-amount").addEventListener("input", function () {
+  const amount = parseFloat(this.value);
+  convolver.setValue(amount);
+});
+
+// Compressor threshold and ratio
+document.getElementById("compressor-threshold").addEventListener("input", function () {
+  const threshold = parseFloat(this.value);
+  compressor.threshold.setValueAtTime(threshold, audioContext.currentTime);
+});
+
+document.getElementById("compressor-ratio").addEventListener("input", function () {
+  const ratio = parseFloat(this.value);
+  compressor.ratio.setValueAtTime(ratio, audioContext.currentTime);
+});
