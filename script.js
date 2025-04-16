@@ -41,6 +41,51 @@ const stockSounds = {
   C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
 };
 
+// Function to play sound based on key
+function playSound(key) {
+  const url = stockSounds[key.toUpperCase()];
+  if (!url) return;
+
+  const audio = new Audio(url);
+  audio.currentTime = 0;
+  audio.play().catch(err => console.log("Audio play error:", err));
+}
+
+// Listen for key presses
+document.addEventListener("keydown", (event) => {
+  const key = event.key.toUpperCase();
+  if (stockSounds[key]) {
+    playSound(key);
+    showDisplay(`Playing pad: ${key}`);
+    highlightPad(key);
+  }
+});
+
+// Click listeners on drum pads
+document.querySelectorAll(".drum-pad").forEach(pad => {
+  pad.addEventListener("click", () => {
+    const key = pad.getAttribute("data-key");
+    playSound(key);
+    showDisplay(`Playing pad: ${key}`);
+    highlightPad(key);
+  });
+});
+
+// Visual feedback
+function highlightPad(key) {
+  const pad = document.querySelector(`.drum-pad[data-key="${key}"]`);
+  if (pad) {
+    pad.classList.add("active");
+    setTimeout(() => pad.classList.remove("active"), 200);
+  }
+}
+
+// Update display
+function showDisplay(message) {
+  const display = document.getElementById("display-text");
+  if (display) display.textContent = message;
+}
+
 // Load Project functionality
 function loadProject() {
   alert("Project loaded!");
