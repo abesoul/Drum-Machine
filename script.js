@@ -165,10 +165,18 @@ function stopSequencer() {
 
 // ---------------------------------- UI & EVENTS ----------------------------------
 function showTab(tabId) {
-  document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
-  document.getElementById(tabId).style.display = "block";
-}
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.getElementById(tabId).classList.add('active');
 
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  const index = ['sequencer', 'pads', 'fx', 'library', 'challenges', 'settings'].indexOf(tabId);
+  document.querySelectorAll('.tab-btn')[index]?.classList.add('active');
+}
 function toggleTheme() {
   document.body.classList.toggle("dark-theme");
 }
