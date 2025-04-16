@@ -13,6 +13,106 @@ function logout() {
   window.location.href = "login.html";
 }
 
+const activePads = {};
+const audioElements = {};
+const sequencerSteps = 16;
+let sequencerInterval = null;
+let sequenceIndex = 0;
+
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "login.html";
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const username = localStorage.getItem("loggedInUser");
+  document.getElementById("user-name").innerText = username;
+
+  document.querySelectorAll(".drum-pad").forEach(pad => {
+    const key = pad.getAttribute("data-key");
+    const audio = new Audio(stockSounds[key]);
+    audioElements[key] = audio;
+    pad.addEventListener("click", () => togglePadPlayback(key));
+  });
+
+  document.addEventListener("keydown", (e) => {
+    const key = e.key.toUpperCase();
+    if (stockSounds[key]) {
+      togglePadPlayback(key);
+    }
+  });
+
+  showTab("pads"); // default tab
+});
+
+function togglePadPlayback(key) {
+  const audio = audioElements[key];
+  if (!audio) return;
+
+  if (activePads[key]) {
+    audio.pause();
+    audio.currentTime = 0;
+    delete activePads[key];
+  } else {
+    audio.play();
+    activePads[key] = true;
+    audio.onended = () => delete activePads[key];
+  }
+}
+
+// Tabs
+function showTab(tabId) {
+  document.querySelectorAll(".tab-content").forEach(tab => tab.style.display = "none");
+  document.getElementById(tabId).style.display = "block";
+}
+
+// Sequencer
+function addTrack() {
+  const grid = document.getElementById("sequencer-grid");
+  const row = document.createElement("div");
+  row.classList.add("sequencer-row");
+
+  for (let i = 0; i < sequencerSteps; i++) {
+    const step = document.createElement("div");
+    step.classList.add("step");
+    step.onclick = () => step.classList.toggle("active");
+    row.appendChild(step);
+  }
+
+  grid.appendChild(row);
+}
+
+function clearSequencer() {
+  document.getElementById("sequencer-grid").innerHTML = "";
+}
+
+function playSequence() {
+  stopSequence();
+  sequenceIndex = 0;
+  sequencerInterval = setInterval(() => {
+    const rows = document.querySelectorAll(".sequencer-row");
+    rows.forEach((row, rowIndex) => {
+      const steps = row.querySelectorAll(".step");
+      if (steps[sequenceIndex] && steps[sequenceIndex].classList.contains("active")) {
+        const key = Object.keys(stockSounds)[rowIndex % Object.keys(stockSounds).length];
+        togglePadPlayback(key);
+      }
+    });
+
+    sequenceIndex = (sequenceIndex + 1) % sequencerSteps;
+  }, 300); // step duration
+}
+
+function stopSequence() {
+  clearInterval(sequencerInterval);
+}
+
+// Theme toggle
+function toggleTheme() {
+  document.body.classList.toggle("dark-theme");
+}
+
+
 // Tab switching functionality
 function showTab(tabId) {
   const tabs = document.querySelectorAll(".tab-content");
