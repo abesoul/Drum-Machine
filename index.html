@@ -34,21 +34,21 @@
       <h2 id="display-text">Tap a Pad or Press a Key</h2>
     </section>
 
-  <div class="pad-grid">
-  <div class="drum-pad" data-key="Q">Q</div>
-  <div class="drum-pad" data-key="W">W</div>
-  <div class="drum-pad" data-key="E">E</div>
-  <div class="drum-pad" data-key="A">A</div>
-  <div class="drum-pad" data-key="S">S</div>
-  <div class="drum-pad" data-key="D">D</div>
-  <div class="drum-pad" data-key="Z">Z</div>
-  <div class="drum-pad" data-key="X">X</div>
-  <div class="drum-pad" data-key="C">C</div>
-</div>
+    <div class="pad-grid">
+      <div class="drum-pad" data-key="Q">Q</div>
+      <div class="drum-pad" data-key="W">W</div>
+      <div class="drum-pad" data-key="E">E</div>
+      <div class="drum-pad" data-key="A">A</div>
+      <div class="drum-pad" data-key="S">S</div>
+      <div class="drum-pad" data-key="D">D</div>
+      <div class="drum-pad" data-key="Z">Z</div>
+      <div class="drum-pad" data-key="X">X</div>
+      <div class="drum-pad" data-key="C">C</div>
+    </div>
 
-<div class="sequencer-grid" id="sequencer-grid">
-  <!-- Steps will be created in JS -->
-</div>
+    <div class="sequencer-grid" id="sequencer-grid">
+      <!-- Steps will be created in JS -->
+    </div>
 
     <div class="loop-toggle">
       <label for="loop-toggle-checkbox">
@@ -71,16 +71,12 @@
     <section id="sequencer" class="tab-content">
       <h2>Step Sequencer</h2>
       <div class="sequencer-controls">
-    <button onclick="addTrack()" class="alien-btn">➕ Add Track</button>
-    <button onclick="playSequence()" class="alien-btn">▶️ Play</button>
-    <button onclick="stopSequence()" class="alien-btn">⏹️ Stop</button>
-    <button onclick="clearSequencer()" class="alien-btn danger">🧼 Clear</button>
-  </div>
-
-      <div id="sequencer-grid" class="sequencer-grid">
-  <!-- Dynamically created grid -->
-</div>
-</div>
+        <button onclick="addTrack()" class="alien-btn">➕ Add Track</button>
+        <button onclick="playSequence()" class="alien-btn">▶️ Play</button>
+        <button onclick="stopSequence()" class="alien-btn">⏹️ Stop</button>
+        <button onclick="clearSequencer()" class="alien-btn danger">🧼 Clear</button>
+      </div>
+      <div id="sequencer-grid" class="sequencer-grid"></div>
     </section>
 
     <section id="fx" class="tab-content">
@@ -128,16 +124,36 @@
       </div>
     </section>
 
+    <!-- Merged Advanced Settings Section -->
     <section id="settings" class="tab-content">
-      <h2>Settings</h2>
-      <label>
-        Dark Mode:
-        <input type="checkbox" id="theme-toggle" onclick="toggleTheme()" />
-      </label>
-      <div class="project-controls">
-        <button onclick="saveProject()">💾 Save</button>
-        <button onclick="loadProject()">📂 Load</button>
+      <h2>⚙️ Advanced Mix Settings</h2>
+
+      <div id="track-fx-container">
+        <!-- Tracks and FX will be dynamically inserted here -->
       </div>
+
+      <div class="settings-panel">
+        <h3>🔧 Global Settings</h3>
+        <div class="settings-toggle">
+          <label for="snap-toggle">Snap to Grid</label>
+          <input type="checkbox" id="snap-toggle" />
+        </div>
+        <div class="settings-toggle">
+          <label for="quantize-toggle">Quantize Notes</label>
+          <input type="checkbox" id="quantize-toggle" />
+        </div>
+        <div class="settings-toggle">
+          <label for="routing-options">Routing Mode</label>
+          <select id="routing-options">
+            <option value="stereo">Stereo</option>
+            <option value="mono">Mono</option>
+            <option value="split">Split Channels</option>
+          </select>
+        </div>
+        <button onclick="savePreset()">💾 Save Preset</button>
+        <button onclick="loadPreset()">📂 Load Preset</button>
+      </div>
+
       <canvas id="waveform" width="800" height="100"></canvas>
     </section>
 
