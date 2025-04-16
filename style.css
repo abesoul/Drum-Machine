@@ -29,6 +29,42 @@ body.dark {
   background-color: #c0392b;
 }
 
+#drum-machine {
+  text-align: center;
+}
+
+#drum-pads {
+  margin-top: 20px;
+}
+
+.drum-pad {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  background-color: #f39c12;
+  color: white;
+  text-align: center;
+  line-height: 60px;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.drum-pad:hover {
+  background-color: #e67e22;
+}
+#logout-btn {
+  padding: 10px;
+  background-color: #e74c3c;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+#logout-btn:hover {
+  background-color: #c0392b;
+}
+
 .tabs {
   display: flex;
   justify-content: space-around;
