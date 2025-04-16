@@ -154,6 +154,26 @@ h1 {
   transition: 0.3s ease;
 }
 
+.seq-btn {
+  background: linear-gradient(45deg, #00f7ff, #8e2de2);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 0 8px #00f7ff88;
+}
+
+.seq-btn:hover {
+  background: linear-gradient(45deg, #00e6e6, #7a1fcf);
+  box-shadow: 0 0 12px #00f7ff;
+  transform: scale(1.05);
+}
+
 .tab-btn:hover {
   background: #00ffff;
   color: #000;
