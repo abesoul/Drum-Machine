@@ -84,6 +84,36 @@ h1 {
   text-shadow: 0 0 10px #00e6e6;
 }
 
+#advanced-settings {
+  background: #0d0d0d;
+  color: #00ffee;
+  border: 1px solid #00ffee50;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.track-fx {
+  border-bottom: 1px solid #00ffee33;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.track-fx label {
+  display: block;
+  margin: 5px 0;
+  color: #ffffffbb;
+}
+
+.settings-panel {
+  margin-top: 20px;
+}
+
+.settings-toggle {
+  margin-bottom: 10px;
+}
+
+
 /* === Display === */
 #display {
   text-align: center;
