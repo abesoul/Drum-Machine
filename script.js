@@ -298,6 +298,60 @@ uploadInput.addEventListener("change", function () {
   }
 });
 
+const trackKeys = ["Q", "W", "E", "A", "S", "D", "Z", "X", "C"];
+let tracks = [];
+let currentStep = 0;
+let sequencerInterval;
+
+function addTrack() {
+  if (tracks.length >= trackKeys.length) {
+    alert("No more available keys to assign!");
+    return;
+  }
+
+  const key = trackKeys[tracks.length];
+  const trackDiv = document.createElement("div");
+  trackDiv.className = "track";
+  trackDiv.innerHTML = `<label>${key}</label><div class="step-row"></div>`;
+  
+  const stepRow = trackDiv.querySelector(".step-row");
+  const stepToggles = [];
+  for (let i = 0; i < 16; i++) {
+    const step = document.createElement("div");
+    step.className = "step";
+    step.onclick = () => step.classList.toggle("active");
+    stepRow.appendChild(step);
+    stepToggles.push(step);
+  }
+
+  document.getElementById("sequencer-tracks").appendChild(trackDiv);
+  tracks.push({ key, steps: stepToggles });
+}
+
+function startSequencer() {
+  stopSequencer(); // stop existing
+  sequencerInterval = setInterval(() => {
+    for (let i = 0; i < tracks.length; i++) {
+      const { key, steps } = tracks[i];
+      steps.forEach((step, idx) => {
+        step.classList.remove("playing");
+        if (idx === currentStep) step.classList.add("playing");
+      });
+
+      if (steps[currentStep].classList.contains("active")) {
+        toggleAudio(key); // play that pad
+      }
+    }
+    currentStep = (currentStep + 1) % 16;
+  }, 300); // 300ms per step
+}
+
+function stopSequencer() {
+  clearInterval(sequencerInterval);
+  currentStep = 0;
+  document.querySelectorAll(".step").forEach(step => step.classList.remove("playing"));
+}
+
 
 // Click listeners on drum pads
 document.querySelectorAll(".drum-pad").forEach(pad => {
