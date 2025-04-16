@@ -28,6 +28,18 @@ function showTab(tabId) {
 function saveProject() {
   alert("Project saved!");
 }
+// Stock audio sample URLs mapped to keys
+const stockSounds = {
+  Q: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  W: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+  E: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+  A: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+  S: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+  D: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+  Z: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+  X: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+  C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
+};
 
 // Load Project functionality
 function loadProject() {
