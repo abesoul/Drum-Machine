@@ -87,15 +87,19 @@
 
     <!-- Tab Contents -->
     <section id="sequencer" class="tab-content">
-      <h2>Step Sequencer</h2>
-      <div class="sequencer-controls">
-        <button onclick="addTrack()" class="alien-btn">➕ Add Track</button>
-        <button onclick="playSequence()" class="alien-btn">▶️ Play</button>
-        <button onclick="stopSequence()" class="alien-btn">⏹️ Stop</button>
-        <button onclick="clearSequencer()" class="alien-btn danger">🧼 Clear</button>
-      </div>
-      <div id="sequencer-grid" class="sequencer-grid"></div>
-    </section>
+  <div class="tab-panel">
+    <h2>🎛️ Step Sequencer</h2>
+    <p>Create beats by arranging steps across pads. Perfect for looping Afrobeat grooves or punchy percussive lines.</p>
+    <div class="sequencer-controls">
+      <button onclick="addTrack()" class="alien-btn">➕ Add Track</button>
+      <button onclick="playSequence()" class="alien-btn">▶️ Play</button>
+      <button onclick="stopSequence()" class="alien-btn">⏹️ Stop</button>
+      <button onclick="clearSequencer()" class="alien-btn danger">🧼 Clear</button>
+    </div>
+    <div id="sequencer-grid" class="sequencer-grid"></div>
+  </div>
+</section>
+
 
     <section id="fx" class="tab-content">
       <h2>Effects Rack</h2>
@@ -117,63 +121,71 @@
       </div>
     </section>
 
-    <section id="library" class="tab-content">
-      <h2>Sample Library</h2>
-      <input type="file" id="upload-sample" accept="audio/*" />
-      <select id="assign-sample-key">
-        <option value="">Assign to Key</option>
-        <option value="Q">Q</option>
-        <option value="W">W</option>
-        <option value="E">E</option>
-        <option value="A">A</option>
-        <option value="S">S</option>
-        <option value="D">D</option>
-        <option value="Z">Z</option>
-        <option value="X">X</option>
-        <option value="C">C</option>
-      </select>
-    </section>
+   <section id="library" class="tab-content">
+  <div class="tab-panel">
+    <h2>🎵 Sample Library</h2>
+    <p>Upload custom audio clips and assign them to keys. Bring your own sound to the beat!</p>
+    <input type="file" id="upload-sample" accept="audio/*" />
+    <select id="assign-sample-key">
+      <option value="">Assign to Key</option>
+      <option value="Q">Q</option>
+      <option value="W">W</option>
+      <option value="E">E</option>
+      <option value="A">A</option>
+      <option value="S">S</option>
+      <option value="D">D</option>
+      <option value="Z">Z</option>
+      <option value="X">X</option>
+      <option value="C">C</option>
+    </select>
+  </div>
+</section>
+
 
     <section id="challenges" class="tab-content">
-      <h2>Beat Challenges</h2>
-      <div class="challenge">
-        <p>Challenge 1: Make a 4-pad loop!</p>
-        <button onclick="startChallenge()">Start</button>
-      </div>
-    </section>
+  <div class="tab-panel">
+    <h2>🔥 Beat Challenges</h2>
+    <p>Try time-based or style-specific challenges to improve your beat-making skills and unlock badges.</p>
+    <div class="challenge">
+      <p>Challenge 1: Make a 4-pad loop!</p>
+      <button onclick="startChallenge()">🚀 Start</button>
+    </div>
+  </div>
+</section>
 
     <!-- Merged Advanced Settings Section -->
     <section id="settings" class="tab-content">
-      <h2>⚙️ Advanced Mix Settings</h2>
+  <div class="tab-panel">
+    <h2>⚙️ Advanced Mix Settings</h2>
+    <p>Refine your mix using global toggles, routing options, and per-track FX. Ideal for pros and explorers alike.</p>
+    
+    <div id="track-fx-container"></div>
 
-      <div id="track-fx-container">
-        <!-- Tracks and FX will be dynamically inserted here -->
+    <div class="settings-panel">
+      <h3>🔧 Global Settings</h3>
+      <div class="settings-toggle">
+        <label for="snap-toggle">Snap to Grid</label>
+        <input type="checkbox" id="snap-toggle" />
       </div>
-
-      <div class="settings-panel">
-        <h3>🔧 Global Settings</h3>
-        <div class="settings-toggle">
-          <label for="snap-toggle">Snap to Grid</label>
-          <input type="checkbox" id="snap-toggle" />
-        </div>
-        <div class="settings-toggle">
-          <label for="quantize-toggle">Quantize Notes</label>
-          <input type="checkbox" id="quantize-toggle" />
-        </div>
-        <div class="settings-toggle">
-          <label for="routing-options">Routing Mode</label>
-          <select id="routing-options">
-            <option value="stereo">Stereo</option>
-            <option value="mono">Mono</option>
-            <option value="split">Split Channels</option>
-          </select>
-        </div>
-        <button onclick="savePreset()">💾 Save Preset</button>
-        <button onclick="loadPreset()">📂 Load Preset</button>
+      <div class="settings-toggle">
+        <label for="quantize-toggle">Quantize Notes</label>
+        <input type="checkbox" id="quantize-toggle" />
       </div>
+      <div class="settings-toggle">
+        <label for="routing-options">Routing Mode</label>
+        <select id="routing-options">
+          <option value="stereo">Stereo</option>
+          <option value="mono">Mono</option>
+          <option value="split">Split Channels</option>
+        </select>
+      </div>
+      <button onclick="savePreset()">💾 Save Preset</button>
+      <button onclick="loadPreset()">📂 Load Preset</button>
+    </div>
 
-      <canvas id="waveform" width="800" height="100"></canvas>
-    </section>
+    <canvas id="waveform" width="800" height="100"></canvas>
+  </div>
+</section>
 
   </main>
 
