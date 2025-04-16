@@ -1,18 +1,15 @@
-// Simulate a "database" using localStorage
-const usersDatabase = JSON.parse(localStorage.getItem('users')) || [];
-
-document.getElementById('login-form').addEventListener('submit', function(event) {
+// Handle login form submission
+document.getElementById("login-form").addEventListener("submit", function(event) {
   event.preventDefault();
-  
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
-  
-  const user = usersDatabase.find(user => user.username === username && user.password === password);
-  
-  if (user) {
-    localStorage.setItem('loggedInUser', JSON.stringify(user));
-    window.location.href = 'index.html';
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  // For simplicity, we'll use a mock user check
+  if (username === "admin" && password === "password123") {
+    localStorage.setItem("loggedInUser", username);
+    window.location.href = "index.html"; // Redirect to main app page
   } else {
-    document.getElementById('error-message').style.display = 'block';
+    alert("Invalid username or password");
   }
 });
