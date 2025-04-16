@@ -60,10 +60,12 @@ function toggleAudio(key) {
     currentAudio = audio;
     trimAudio(audio, start, end);
     visualizeAudio(audio);
-    display.textContent = `Playing: ${key}`;
+    updateDisplay(`🎵 Playing: ${key}`);
+    animatePad(key, true);
   } else {
     audio.pause();
-    display.textContent = `Stopped: ${key}`;
+    updateDisplay(`⏹️ Stopped: ${key}`);
+    animatePad(key, false);
   }
 }
 
@@ -72,6 +74,7 @@ function trimAudio(audio, start, end) {
   audio.addEventListener("timeupdate", function () {
     if (audio.currentTime >= end) {
       audio.pause();
+      updateDisplay("⏹️ Reached end of trim");
     }
   });
 }
@@ -84,11 +87,15 @@ function visualizeAudio(audio) {
     analyser.getByteFrequencyData(dataArray);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    gradient.addColorStop(0, '#00ffc3');
+    gradient.addColorStop(1, '#006eff');
+
     const barWidth = (canvas.width / dataArray.length) * 2.5;
     let x = 0;
 
     dataArray.forEach(value => {
-      ctx.fillStyle = '#00ffcc';
+      ctx.fillStyle = gradient;
       ctx.fillRect(x, canvas.height - value, barWidth, value);
       x += barWidth + 1;
     });
@@ -97,6 +104,16 @@ function visualizeAudio(audio) {
   }
 
   draw();
+}
+
+function animatePad(key, isPlaying) {
+  const pad = document.querySelector(`.drum-pad[data-key="${key}"]`);
+  if (!pad) return;
+  pad.classList.remove("playing");
+  if (isPlaying) {
+    pad.classList.add("playing");
+    setTimeout(() => pad.classList.remove("playing"), 300);
+  }
 }
 
 // === Pad Listeners ===
@@ -114,7 +131,7 @@ document.getElementById("file-upload").addEventListener("change", function () {
   if (file && key) {
     const url = URL.createObjectURL(file);
     createAudio(key, url);
-    display.textContent = `Sample assigned to ${key}`;
+    updateDisplay(`✅ Sample assigned to ${key}`);
   }
 });
 
@@ -136,7 +153,13 @@ document.getElementById("compressor-ratio").addEventListener("input", e => {
 });
 
 // === Theme ===
-document.getElementById("theme-toggle").addEventListener("change", function () {
+const themeToggle = document.getElementById("theme-toggle");
+const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+document.body.classList.toggle("dark", prefersDark);
+themeToggle.checked = prefersDark;
+projectData.theme = prefersDark ? 'dark' : 'light';
+
+themeToggle.addEventListener("change", function () {
   const isDark = this.checked;
   document.body.classList.toggle("dark", isDark);
   projectData.theme = isDark ? 'dark' : 'light';
@@ -145,16 +168,16 @@ document.getElementById("theme-toggle").addEventListener("change", function () {
 // === Project Save/Load ===
 function saveProject() {
   localStorage.setItem("projectData", JSON.stringify(projectData));
-  alert("Project saved!");
+  updateDisplay("💾 Project saved!");
 }
 
 function loadProject() {
   const saved = JSON.parse(localStorage.getItem("projectData"));
   if (saved) {
     projectData = saved;
-    alert("Project loaded!");
+    updateDisplay("📂 Project loaded!");
   } else {
-    alert("No saved project found.");
+    updateDisplay("⚠️ No saved project found.");
   }
 }
 
@@ -179,7 +202,15 @@ function playSound(key) {
   if (audioElements[key]) {
     audioElements[key].currentTime = 0;
     audioElements[key].play();
+    animatePad(key, true);
   }
+}
+
+// === Display Update ===
+function updateDisplay(message) {
+  display.textContent = message;
+  display.classList.add("flash");
+  setTimeout(() => display.classList.remove("flash"), 500);
 }
 
 // === Default Sounds ===
