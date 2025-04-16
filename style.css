@@ -178,6 +178,29 @@ h1 {
   flex-wrap: wrap;
 }
 
+.track {
+  margin: 1rem 0;
+  color: var(--accent);
+}
+.step-row {
+  display: flex;
+  gap: 4px;
+}
+.step {
+  width: 20px;
+  height: 20px;
+  background: #222;
+  border: 1px solid #333;
+  cursor: pointer;
+}
+.step.active {
+  background-color: #0ff;
+}
+.step.playing {
+  border: 2px solid #fff;
+}
+
+
 .tab-btn {
   padding: 10px 20px;
   background: transparent;
