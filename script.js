@@ -42,6 +42,33 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+const steps = [];
+
+function initSequencerSteps(stepCount = 16) {
+  const grid = document.getElementById("sequencer-grid");
+  grid.innerHTML = "";
+  steps.length = 0;
+  for (let i = 0; i < stepCount; i++) {
+    const step = document.createElement("div");
+    step.classList.add("step");
+    step.addEventListener("click", () => toggleStep(i));
+    grid.appendChild(step);
+    steps.push(step);
+  }
+}
+
+function startPlayhead(interval = 300) {
+  let index = 0;
+  setInterval(() => {
+    steps.forEach((step, i) => step.classList.toggle("playing", i === index));
+    index = (index + 1) % steps.length;
+  }, interval);
+}
+
+initSequencerSteps();
+startPlayhead();
+
+  
   showTab("pads"); // default tab
 });
 
@@ -59,6 +86,26 @@ function togglePadPlayback(key) {
     audio.onended = () => delete activePads[key];
   }
 }
+
+function toggleAudio(key) {
+  const audio = audioElements[key];
+  if (audio.paused) {
+    if (currentAudio && currentAudio !== audio) {
+      currentAudio.pause();
+    }
+    audio.currentTime = startTimeInput.value;
+    audio.loop = loopToggle.checked;
+    applyPadFX(audio, key);
+    audio.play();
+    visualizeAudio(audio);
+    currentAudio = audio;
+    display.textContent = `Playing: ${key}`;
+  } else {
+    audio.pause();
+    display.textContent = `Stopped: ${key}`;
+  }
+}
+
 
 // Tabs
 function showTab(tabId) {
@@ -122,6 +169,26 @@ function showTab(tabId) {
 
   const activeTab = document.getElementById(tabId);
   activeTab.classList.add("active");
+}
+
+const padFX = {};
+
+function setPadFX(key, fxType, value) {
+  if (!padFX[key]) padFX[key] = {};
+  padFX[key][fxType] = value;
+}
+
+function applyPadFX(audio, key) {
+  const fx = padFX[key];
+  if (!fx) return;
+
+  // Example: apply volume or playbackRate
+  if (fx.volume !== undefined) {
+    audio.volume = fx.volume;
+  }
+  if (fx.playbackRate !== undefined) {
+    audio.playbackRate = fx.playbackRate;
+  }
 }
 
 // Save Project functionality
@@ -210,6 +277,27 @@ document.addEventListener("keydown", (event) => {
     highlightPad(key);
   }
 });
+
+function autoAssignKey(sampleUrl) {
+  const availableKeys = ["Q", "W", "E", "A", "S", "D", "Z", "X", "C"];
+  for (let key of availableKeys) {
+    if (!audioElements[key]) {
+      createAudio(key, sampleUrl);
+      display.textContent = `Auto-mapped sample to ${key}`;
+      return;
+    }
+  }
+  alert("All pads are already assigned!");
+}
+
+uploadInput.addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    autoAssignKey(url);
+  }
+});
+
 
 // Click listeners on drum pads
 document.querySelectorAll(".drum-pad").forEach(pad => {
