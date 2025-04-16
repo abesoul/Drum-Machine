@@ -67,18 +67,16 @@
     <!-- Tab Contents -->
     <section id="sequencer" class="tab-content">
       <h2>Step Sequencer</h2>
-      <div class="sequencer-grid">
-        <div class="step" onclick="toggleStep(0)"></div>
-        <div class="step" onclick="toggleStep(1)"></div>
-        <div class="step" onclick="toggleStep(2)"></div>
-         <button class="seq-btn" onclick="addTrack()">➕ New Track</button>
-  <button class="seq-btn" onclick="clearSequencer()">🧹 Clear</button>
-  <button class="seq-btn" onclick="playSequence()">▶️ Play Sequence</button>
-  <button class="seq-btn" onclick="stopSequence()">⏹️ Stop</button>
-        <!-- More steps -->
-      </div>
+      <div class="sequencer-controls">
+    <button onclick="addTrack()" class="alien-btn">➕ Add Track</button>
+    <button onclick="playSequence()" class="alien-btn">▶️ Play</button>
+    <button onclick="stopSequence()" class="alien-btn">⏹️ Stop</button>
+    <button onclick="clearSequencer()" class="alien-btn danger">🧼 Clear</button>
+  </div>
+
       <div id="sequencer-grid" class="sequencer-grid">
   <!-- Dynamically created grid -->
+</div>
 </div>
     </section>
 
