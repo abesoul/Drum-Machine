@@ -3,42 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drum Machine</title>
+  <title>Space Drum Machine</title>
   <link rel="stylesheet" href="style.css" />
-   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <script>
+  <script>
     // Redirect to login if not logged in
     if (!localStorage.getItem("loggedInUser")) {
       window.location.href = "login.html";
     }
-</script>
-  
-  <div id="auth-bar">
-    <span>Welcome, <span id="user-name"></span></span>
-    <button onclick="logout()">Logout</button>
-  </div>
+  </script>
 
-   <div class="app">
-     <h1>🔥 Space Drum Machine 🔊</h1
-    </div>
-     
-  <div id="controls">
-    
+  <header id="auth-bar">
+    <span>🧑‍🚀 Welcome, <span id="user-name"></span></span>
+    <button onclick="logout()">Logout</button>
+  </header>
+
+  <main class="app-container">
+    <h1 class="title">🚀 Space Drum Machine 🔊</h1>
+
+    <section class="upload-controls">
       <input type="file" id="file-upload">
       <input type="text" id="assign-key" placeholder="Assign to key (A-Z)">
-      <button id="save-project-btn">Save Project</button>
-      <button id="download-project-btn">Download</button>
-    </div>
-  
-    <div id="display">
-      <h2 id="display-text">Press a Key or Click a Pad</h2>
-    </div>
-    
-</script>
+      <button id="save-project-btn">💾 Save</button>
+      <button id="download-project-btn">⬇️ Download</button>
+    </section>
 
-    <div class="pad-grid">
+    <section id="display">
+      <h2 id="display-text">Tap a Pad or Press a Key</h2>
+    </section>
+
+    <section class="pad-grid">
       <div class="drum-pad" data-key="Q">Q</div>
       <div class="drum-pad" data-key="W">W</div>
       <div class="drum-pad" data-key="E">E</div>
@@ -48,7 +44,7 @@
       <div class="drum-pad" data-key="Z">Z</div>
       <div class="drum-pad" data-key="X">X</div>
       <div class="drum-pad" data-key="C">C</div>
-    </div>
+    </section>
 
     <div class="loop-toggle">
       <label for="loop-toggle-checkbox">
@@ -56,104 +52,98 @@
         Loop Mode
       </label>
     </div>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab-btn" onclick="showTab('sequencer')">🎛️ Sequencer</button>
+      <button class="tab-btn" onclick="showTab('pads')">🥁 Pads</button>
+      <button class="tab-btn" onclick="showTab('fx')">🎚️ FX</button>
+      <button class="tab-btn" onclick="showTab('library')">🎵 Library</button>
+      <button class="tab-btn" onclick="showTab('challenges')">🔥 Challenges</button>
+      <button class="tab-btn" onclick="showTab('settings')">⚙️ Settings</button>
+    </nav>
+
+    <!-- Tab Contents -->
+    <section id="sequencer" class="tab-content">
+      <h2>Step Sequencer</h2>
+      <div class="sequencer-grid">
+        <div class="step" onclick="toggleStep(0)"></div>
+        <div class="step" onclick="toggleStep(1)"></div>
+        <div class="step" onclick="toggleStep(2)"></div>
+        <!-- More steps -->
+      </div>
+    </section>
+
+    <section id="pads" class="tab-content">
+      <h2>Drum Pads</h2>
+      <div class="pad-grid">
+        <div class="drum-pad" data-key="Q">Q</div>
+        <div class="drum-pad" data-key="W">W</div>
+        <div class="drum-pad" data-key="E">E</div>
+        <div class="drum-pad" data-key="A">A</div>
+        <!-- More pads -->
+      </div>
+    </section>
+
+    <section id="fx" class="tab-content">
+      <h2>Effects Rack</h2>
+      <div class="effects">
+        <label>Delay: <input type="range" id="delay" min="0" max="1" step="0.01" /></label>
+        <label>Filter: <input type="range" id="filter" min="0" max="1" step="0.01" /></label>
+        <label>Bitcrusher: <input type="range" id="bitcrusher" min="0" max="1" step="0.01" /></label>
+      </div>
+
+      <div id="trimmer-controls">
+        <label>Start Time: <input type="range" id="start-time" min="0" max="30" step="0.1" /></label>
+        <label>End Time: <input type="range" id="end-time" min="0" max="30" step="0.1" /></label>
+      </div>
+
+      <div id="reverb-controls">
+        <label>Mix: <input type="range" id="reverb-mix" min="0" max="1" step="0.01" /></label>
+        <label>Decay: <input type="range" id="reverb-decay" min="0.1" max="10" step="0.1" /></label>
+        <label>Size: <input type="range" id="reverb-size" min="0.1" max="10" step="0.1" /></label>
+      </div>
+    </section>
+
+    <section id="library" class="tab-content">
+      <h2>Sample Library</h2>
+      <input type="file" id="upload-sample" accept="audio/*" />
+      <select id="assign-sample-key">
+        <option value="">Assign to Key</option>
+        <option value="Q">Q</option>
+        <option value="W">W</option>
+        <option value="E">E</option>
+        <option value="A">A</option>
+        <option value="S">S</option>
+        <option value="D">D</option>
+        <option value="Z">Z</option>
+        <option value="X">X</option>
+        <option value="C">C</option>
+      </select>
+    </section>
+
+    <section id="challenges" class="tab-content">
+      <h2>Beat Challenges</h2>
+      <div class="challenge">
+        <p>Challenge 1: Make a 4-pad loop!</p>
+        <button onclick="startChallenge()">Start</button>
+      </div>
+    </section>
+
+    <section id="settings" class="tab-content">
+      <h2>Settings</h2>
+      <label>
+        Dark Mode:
+        <input type="checkbox" id="theme-toggle" onclick="toggleTheme()" />
       </label>
-    </div>
+      <div class="project-controls">
+        <button onclick="saveProject()">💾 Save</button>
+        <button onclick="loadProject()">📂 Load</button>
+      </div>
+      <canvas id="waveform" width="800" height="100"></canvas>
+    </section>
 
-    <div class="pad-grid" id="drum-pads">
-      <!-- Pads will be dynamically created -->
-    </div>
-    
-  <!-- Tabs Navigation -->
-  <div class="tabs">
-    <button class="tab-btn" onclick="showTab('sequencer')">Sequencer</button>
-    <button class="tab-btn" onclick="showTab('pads')">Pads</button>
-    <button class="tab-btn" onclick="showTab('fx')">FX</button>
-    <button class="tab-btn" onclick="showTab('library')">Library</button>
-    <button class="tab-btn" onclick="showTab('challenges')">Challenges</button>
-    <button class="tab-btn" onclick="showTab('settings')">Settings</button>
-  </div>
-
-  <!-- Tab Contents -->
-  <div id="sequencer" class="tab-content">
-    <h2>Step Sequencer</h2>
-    <div class="sequencer-grid">
-      <!-- 16-step grid -->
-      <div class="step" onclick="toggleStep(0)"></div>
-      <div class="step" onclick="toggleStep(1)"></div>
-      <div class="step" onclick="toggleStep(2)"></div>
-      <!-- Add more steps as needed -->
-    </div>
-  </div>
-
-  <div id="pads" class="tab-content">
-    <h2>Drum Pads</h2>
-    <div class="pad-grid">
-      <div class="drum-pad" data-key="Q" style="background-color: #f0f0f0;">Q</div>
-      <div class="drum-pad" data-key="W" style="background-color: #d0d0d0;">W</div>
-      <div class="drum-pad" data-key="E" style="background-color: #b0b0b0;">E</div>
-      <div class="drum-pad" data-key="A" style="background-color: #909090;">A</div>
-      <!-- More pads as needed -->
-    </div>
-  </div>
-
-  <div id="fx" class="tab-content">
-    <h2>Effects Rack</h2>
-    <div class="effects">
-      <label for="delay">Delay:</label>
-      <input type="range" id="delay" min="0" max="1" step="0.01" value="0.5" />
-      <label for="filter">Filter:</label>
-      <input type="range" id="filter" min="0" max="1" step="0.01" value="0.5" />
-      <label for="bitcrusher">Bitcrusher:</label>
-      <input type="range" id="bitcrusher" min="0" max="1" step="0.01" value="0.5" />
-    </div>
-     <div id="trimmer-controls">
-      <label>Trim Start Time (sec): <input type="range" min="0" max="30" step="0.1" id="start-time" /></label>
-      <label>Trim End Time (sec): <input type="range" min="0" max="30" step="0.1" id="end-time" /></label>
-    </div>
-
-    <div id="reverb-controls">
-      <label>Reverb Mix: <input type="range" min="0" max="1" step="0.01" id="reverb-mix" value="0.5" /></label>
-      <label>Reverb Decay: <input type="range" min="0.1" max="10" step="0.1" id="reverb-decay" value="2" /></label>
-      <label>Reverb Size: <input type="range" min="0.1" max="10" step="0.1" id="reverb-size" value="1" /></label>
-    </div>
-  </div>
-
-  <div id="library" class="tab-content">
-    <h2>Sample Library</h2>
-    <label for="upload-sample">Upload Custom Sample:</label>
-    <input type="file" id="upload-sample" accept="audio/*" />
-    <select id="assign-sample-key">
-      <option value="">Assign to Key</option>
-      <option value="Q">Q</option>
-      <option value="W">W</option>
-      <option value="E">E</option>
-      <option value="A">A</option>
-      <option value="S">S</option>
-      <option value="D">D</option>
-      <option value="Z">Z</option>
-      <option value="X">X</option>
-      <option value="C">C</option>
-    </select>
-  </div>
-
-  <div id="challenges" class="tab-content">
-    <h2>Beat Challenges</h2>
-    <div class="challenge">
-      <p>Challenge 1: Create a basic drum loop using 4 pads.</p>
-      <button onclick="startChallenge()">Start Challenge</button>
-    </div>
-  </div>
-
-  <div id="settings" class="tab-content">
-    <h2>Settings</h2>
-    <label for="theme-toggle">Dark Mode</label>
-    <input type="checkbox" id="theme-toggle" onclick="toggleTheme()" />
-    <div>
-      <button onclick="saveProject()">Save Project</button>
-      <button onclick="loadProject()">Load Project</button>
-    </div>
-    <canvas id="waveform" width="800" height="100"></canvas>
-  </div>
+  </main>
 
   <script src="script.js"></script>
 </body>
