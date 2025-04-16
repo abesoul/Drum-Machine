@@ -163,6 +163,20 @@ function stopSequencer() {
   document.querySelectorAll(".step").forEach(step => step.classList.remove("playing"));
 }
 
+let tempo = 120; // Default tempo (BPM)
+
+// Function to adjust tempo
+function adjustTempo(direction) {
+  tempo += direction;
+  if (tempo < 30) tempo = 30;  // Minimum BPM limit
+  if (tempo > 300) tempo = 300;  // Maximum BPM limit
+  document.getElementById("tempo-display").innerText = `BPM: ${tempo}`;
+
+  // You can implement the actual tempo change logic for your audio playback here, 
+  // such as updating your sequencer's timing or beat playing speed
+}
+
+
 // ---------------------------------- UI & EVENTS ----------------------------------
 function showTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(tab => {
