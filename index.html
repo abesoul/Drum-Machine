@@ -130,37 +130,6 @@
 
     <section id="settings" class="tab-content">
       <h2>Settings</h2>
-      <!-- Advanced FX & Settings Panel -->
-<div id="advanced-settings" class="tab-content">
-  <h2>⚙️ Advanced Mix Settings</h2>
-
-  <div id="track-fx-container">
-    <!-- Tracks and FX will be dynamically inserted here -->
-  </div>
-
-  <div class="settings-panel">
-    <h3>🔧 Global Settings</h3>
-    <div class="settings-toggle">
-      <label for="snap-toggle">Snap to Grid</label>
-      <input type="checkbox" id="snap-toggle" />
-    </div>
-    <div class="settings-toggle">
-      <label for="quantize-toggle">Quantize Notes</label>
-      <input type="checkbox" id="quantize-toggle" />
-    </div>
-    <div class="settings-toggle">
-      <label for="routing-options">Routing Mode</label>
-      <select id="routing-options">
-        <option value="stereo">Stereo</option>
-        <option value="mono">Mono</option>
-        <option value="split">Split Channels</option>
-      </select>
-    </div>
-    <button onclick="savePreset()">💾 Save Preset</button>
-    <button onclick="loadPreset()">📂 Load Preset</button>
-  </div>
-</div>
-
       <label>
         Dark Mode:
         <input type="checkbox" id="theme-toggle" onclick="toggleTheme()" />
