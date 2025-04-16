@@ -57,6 +57,55 @@ function initSequencerSteps(stepCount = 16) {
   }
 }
 
+const tracks = ['Kick', 'Snare', 'Hi-Hat', 'Bass', 'Synth'];
+
+function loadTrackFXControls() {
+  const container = document.getElementById("track-fx-container");
+  container.innerHTML = "";
+
+  tracks.forEach((track, index) => {
+    const trackDiv = document.createElement("div");
+    trackDiv.className = "track-fx";
+
+    trackDiv.innerHTML = `
+      <h4>🎚️ Track: ${track}</h4>
+      <label>Volume: 
+        <input type="range" min="0" max="1" step="0.01" value="0.8" 
+        onchange="updateTrackFX(${index}, 'volume', this.value)" />
+      </label>
+      <label>Pan: 
+        <input type="range" min="-1" max="1" step="0.01" value="0" 
+        onchange="updateTrackFX(${index}, 'pan', this.value)" />
+      </label>
+      <label>Delay: 
+        <input type="range" min="0" max="1" step="0.01" value="0.3" 
+        onchange="updateTrackFX(${index}, 'delay', this.value)" />
+      </label>
+    `;
+
+    container.appendChild(trackDiv);
+  });
+}
+
+function updateTrackFX(trackIndex, effect, value) {
+  console.log(`Track ${trackIndex} ${effect} set to ${value}`);
+  // TODO: Link to actual Web Audio API nodes for live FX manipulation
+}
+
+function savePreset() {
+  alert("Preset saved!");
+  // TODO: Save current track FX values to localStorage or JSON
+}
+
+function loadPreset() {
+  alert("Preset loaded!");
+  // TODO: Load saved FX values and apply to UI/audio engine
+}
+
+// Initialize when tab is opened or page loads
+loadTrackFXControls();
+
+  
 function startPlayhead(interval = 300) {
   let index = 0;
   setInterval(() => {
