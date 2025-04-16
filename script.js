@@ -29,6 +29,40 @@ const stockSounds = {
   C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
 };
 
+const sampleList = document.getElementById("sample-list");
+
+// Handle file selection
+document.getElementById("upload-sample").addEventListener("change", function(event) {
+  const files = event.target.files;
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const fileReader = new FileReader();
+
+    fileReader.onload = function(e) {
+      const audioElement = new Audio(e.target.result); // Create audio element from file
+      const li = document.createElement("li");
+      li.textContent = file.name;
+
+      // Add click functionality to assign sample to a pad
+      li.addEventListener("click", function() {
+        assignSampleToPad(audioElement);
+      });
+
+      sampleList.appendChild(li);
+    };
+
+    fileReader.readAsDataURL(file); // Read the file and load as audio
+  }
+});
+
+// Function to assign a sample to a drum pad
+function assignSampleToPad(audio) {
+  // Logic to assign audio to a drum pad, here we simply log it as an example
+  console.log("Assigned sample to pad:", audio);
+  // Update your app's drum pad to play the selected sample on tap
+}
+
+
 function loadAudioPads() {
   Object.keys(stockSounds).forEach(key => {
     const audio = new Audio(stockSounds[key]);
