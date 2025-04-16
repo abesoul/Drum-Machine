@@ -129,7 +129,8 @@ function saveProject() {
   alert("Project saved!");
 }
 // Stock audio sample URLs mapped to keys
-const stockSounds = {
+const padAudioMap = {};
+const stockSamples = {
   Q: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
   W: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
   E: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
@@ -140,6 +141,55 @@ const stockSounds = {
   X: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
   C: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
 };
+
+// Load audio for each key
+function loadAudioPads() {
+  Object.keys(stockSamples).forEach(key => {
+    const audio = new Audio(stockSamples[key]);
+    audio.loop = false;
+    padAudioMap[key] = {
+      audio: audio,
+      isPlaying: false
+    };
+  });
+}
+
+// Toggle play/stop per pad
+function togglePadAudio(key) {
+  const pad = padAudioMap[key];
+  if (!pad) return;
+
+  if (pad.isPlaying) {
+    pad.audio.pause();
+    pad.audio.currentTime = 0;
+    pad.isPlaying = false;
+  } else {
+    pad.audio.currentTime = 0;
+    pad.audio.play();
+    pad.isPlaying = true;
+
+    pad.audio.onended = () => {
+      pad.isPlaying = false;
+    };
+  }
+}
+
+// Add click listeners to pads
+function setupPadListeners() {
+  const drumPads = document.querySelectorAll('.drum-pad');
+  drumPads.forEach(pad => {
+    const key = pad.dataset.key;
+    pad.addEventListener('click', () => {
+      togglePadAudio(key);
+    });
+  });
+}
+
+// Initialize pads
+document.addEventListener('DOMContentLoaded', () => {
+  loadAudioPads();
+  setupPadListeners();
+});
 
 // Function to play sound based on key
 function playSound(key) {
