@@ -7,9 +7,18 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+   <script>
+    // Redirect to login if not logged in
+    if (!localStorage.getItem("loggedInUser")) {
+      window.location.href = "login.html";
+    }
+  </script>
+  
   <div id="auth-bar">
-    <button id="logout-btn">Logout</button>
+     <span>Welcome, <span id="user-name"></span></span>
+    <button onclick="logout()">Logout</button>
   </div>
+  
   <div id="controls">
       <label><input type="checkbox" id="loop-toggle-checkbox"> Loop Mode</label>
       <input type="file" id="file-upload">
