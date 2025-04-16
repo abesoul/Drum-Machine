@@ -71,8 +71,15 @@
         <div class="step" onclick="toggleStep(0)"></div>
         <div class="step" onclick="toggleStep(1)"></div>
         <div class="step" onclick="toggleStep(2)"></div>
+         <button class="seq-btn" onclick="addTrack()">➕ New Track</button>
+  <button class="seq-btn" onclick="clearSequencer()">🧹 Clear</button>
+  <button class="seq-btn" onclick="playSequence()">▶️ Play Sequence</button>
+  <button class="seq-btn" onclick="stopSequence()">⏹️ Stop</button>
         <!-- More steps -->
       </div>
+      <div id="sequencer-grid" class="sequencer-grid">
+  <!-- Dynamically created grid -->
+</div>
     </section>
 
     <section id="pads" class="tab-content">
